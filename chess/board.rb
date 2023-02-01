@@ -3,7 +3,7 @@ require_relative "piece"
 class Board
   def initialize
     @null_piece = NullPiece.new
-    @rows = Array.new(8) { Array.new(8, @null_piece) }  # change to NullPiece later
+    @rows = Array.new(8) { Array.new(8, @null_piece) }
     setup_board
   end
 
@@ -31,7 +31,7 @@ class Board
     raise "there is no piece at #{start_pos}" if self[start_pos] == nil
     # raise "the piece cannot move to #{end_pos}" if !valid_pos?(end_pos)
     piece = self[start_pos]
-    self[start_pos] = @null_piece # change to NullPiece later
+    self[start_pos] = @null_piece
     self[end_pos] = piece
   end
 

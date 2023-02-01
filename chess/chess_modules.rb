@@ -1,41 +1,64 @@
 module Slideable
-  HORIZONTAL_DIRS = []
-  DIAGONAL_DIRS = []
+  HORIZONTAL_DIRS = [
+    [1, 0],   # up
+    [-1, 0],  # down
+    [0, -1],  # left
+    [0, 1]    # right
+  ]
+  DIAGONAL_DIRS = [
+    [-1, 1],  # up right
+    [-1, -1], # up left
+    [1, -1],  # down left
+    [1, 1]    # down right
+  ]
 
   def horizontal_dirs
-    HORIZONTAL_DIRS = []
-
-    # up
-    grow_unblocked_moves_in_dir(1, 0)
-
-    # down
-    grow_unblocked_moves_in_dir(-1, 0)
-
-    # left
-    grow_unblocked_moves_in_dir(0, -1)
-
-    # right
-    grow_unblocked_moves_in_dir(0, 1)
-
     HORIZONTAL_DIRS
   end
 
   def diagonal_dirs
-    DIAGONAL_DIRS = []
-
-    # up right
-    grow_unblocked_moves_in_dir(-1, 1)
-
-    # up left
-    grow_unblocked_moves_in_dir(-1, -1)
-
-    # down left
-    grow_unblocked_moves_in_dir(1, -1)
-
-    # down right
-    grow_unblocked_moves_in_dir(1, 1)
-
     DIAGONAL_DIRS
+  end
+
+  def moves
+    # returns all moves in an array
+    all_moves = []
+    dirs = move_dirs
+
+    if dirs.include?(:horizontal)
+      horizontal_dirs.each do |direction|
+        all_moves += grow_unblocked_moves_in_dir(*direction)
+      end
+    end
+
+    if dirs.include?(:diagonal)
+      diagonal_dirs.each do |direction|
+        all_moves += grow_unblocked_moves_in_dir(*direction)
+      end
+    end
+
+    all_moves
+  end
+
+  private
+  def move_dirs
+    # gets all moves directions
+    # implemented in subclasses
+  end
+
+  def grow_unblocked_moves_in_dir(dx, dy)
+    moves = []
+    considered_pos = [*pos] # make a copy of current position
+    considered_pos[0] += dx
+    considered_pos[1] += dy
+    found_enemy = false
+    until blocked?(considered_pos) || found_enemy
+      found_enemy = enemy?(pos)
+      moves << considered_pos
+      considered_pos[0] += dx
+      considered_pos[1] += dy
+    end
+    moves
   end
 
   def blocked?(pos)
@@ -47,41 +70,20 @@ module Slideable
     return true if board[pos].color != color
     false
   end
-
-  def moves
-    dirs = move_dirs
-    horizontal_dirs if dirs.include?(:horizontal)
-    diagonal_dirs if dirs.include?(:diagonal)
-    HORIZONTAL_DIRS + DIAGONAL_DIRS
-  end
-
-  private
-  def move_dirs
-
-  end
-
-  def grow_unblocked_moves_in_dir(dx, dy)
-    direction_array = (dx != 0 && dy != 0 ? DIAGONAL_DIRS : HORIZONTAL_DIRS)
-    considered_pos = [*pos] # make a copy of pos
-    considered_pos[0] += dx
-    considered_pos[1] += dy
-    found_enemy = false
-    until blocked?(considered_pos) || found_enemy
-      found_enemy = enemy?(pos)
-      direction_array << considered_pos
-      considered_pos[0] += dx
-      considered_pos[1] += dy
-    end
-  end
 end
 
 module Stepable
   def moves
+    all_moves = []
 
+    possible_moves = move_diffs
+
+    all_moves
   end
 
   private
   def move_diffs
-
+    # implemented in subclass
+    # gets all possible move directions
   end
 end

@@ -4,7 +4,7 @@ require "singleton"
 class Piece
   def initialize(color, board, pos)
     
-    @color = symbol
+    @color = color
     @board = board 
     @pos = pos 
 
@@ -57,6 +57,21 @@ class Rook < Piece
   end
 end
 
+class Bishop < Piece
+  include Slideable
+  def initialize(color, board, pos)
+    super
+  end
+
+  def symbol
+    
+  end
+
+  private
+  def move_dirs
+    [:diagonal]
+  end
+end
 
 class Queen < Piece
   include Slideable
@@ -71,23 +86,6 @@ class Queen < Piece
   private
   def move_dirs
     [:horizontal, :diagonal]
-  end
-end
-
-
-class Bishop < Piece
-  include Slideable
-  def initialize(color, board, pos)
-    super
-  end
-
-  def symbol
-    
-  end
-
-  private
-  def move_dirs
-    [:diagonal]
   end
 end
 
