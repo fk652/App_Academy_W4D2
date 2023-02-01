@@ -7,7 +7,7 @@ class Piece
     @color = color
     @board = board 
     @pos = pos 
-
+    
   end
 
   def to_s
@@ -130,14 +130,14 @@ class Knight < Piece
   protected
   def move_diffs
     [
-      [-2, -1],   # up left
-      [-1, -2],  # side left
-      [1, -2],  # 
-      [2, -1],   # right
-      [2,  1],  # up right
-      [1,  2], # up left
-      [-1, 2],  # down left
-      [-2, 1]    # down right
+      [-2, -1],   # slide up left
+      [-1, -2],   # slide left up
+      [1, -2],    # slide left down
+      [2, -1],    # slide down left
+      [2,  1],    # slide right down
+      [1,  2],    # slide down right
+      [-1, 2],    # slide right up
+      [-2, 1]     # slide up right
     ]
   end
 end

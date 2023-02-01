@@ -48,7 +48,7 @@ module Slideable
 
   def grow_unblocked_moves_in_dir(dx, dy)
     moves = []
-    considered_pos = [*pos] # make a copy of current position
+    considered_pos = pos.dup # make a copy of current position
     considered_pos[0] += dx
     considered_pos[1] += dy
     found_enemy = false
@@ -75,9 +75,12 @@ end
 module Stepable
   def moves
     all_moves = []
-
-    possible_moves = move_diffs
-
+    move_diffs.each do |dx, dy|
+      considered_pos = pos.dup # make a copy of current position
+      considered_pos[0] += dx
+      considered_pos[1] += dy
+      all_moves << consider_position if !blocked?(considered_pos)
+    end
     all_moves
   end
 
@@ -85,5 +88,10 @@ module Stepable
   def move_diffs
     # implemented in subclass
     # gets all possible move directions
+  end
+
+  def blocked?(pos)
+    return true if (board[pos].color == color) || pos[0] < 0 || pos[0] > 7 || pos[1] < 0 || pos[1] > 7
+    false
   end
 end
