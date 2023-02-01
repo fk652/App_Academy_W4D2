@@ -101,7 +101,17 @@ class King < Piece
   end
 
   protected
-  def move_diffs
+  def move_diffs 
+    [
+      [1, 0],   # up
+      [-1, 0],  # down
+      [0, -1],  # left
+      [0, 1],   # right
+      [-1, 1],  # up right
+      [-1, -1], # up left
+      [1, -1],  # down left
+      [1, 1]    # down right
+    ]
 
   end
 end
@@ -119,7 +129,16 @@ class Knight < Piece
 
   protected
   def move_diffs
-    
+    [
+      [-2, -1],   # up left
+      [-1, -2],  # side left
+      [1, -2],  # 
+      [2, -1],   # right
+      [2,  1],  # up right
+      [1,  2], # up left
+      [-1, 2],  # down left
+      [-2, 1]    # down right
+    ]
   end
 end
 
