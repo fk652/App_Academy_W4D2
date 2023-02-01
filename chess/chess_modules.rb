@@ -6,97 +6,34 @@ module Slideable
     HORIZONTAL_DIRS = []
 
     # up
-    considered_pos = @pos
-    considered_pos[0] += 1
-    found_enemy = false
-    until blocked?(considered_pos) || found_enemy
-      found_enemy = enemy?(pos)
-      HORIZONTAL_DIRS << considered_pos
-      considered_pos[0] += 1
-    end
+    grow_unblocked_moves_in_dir(1, 0)
 
     # down
-    considered_pos = @pos
-    considered_pos[0] -= 1
-    found_enemy = false
-    until blocked?(considered_pos) || found_enemy
-      found_enemy = enemy?(pos)
-      HORIZONTAL_DIRS << considered_pos
-      considered_pos[0] -= 1
-    end
+    grow_unblocked_moves_in_dir(-1, 0)
 
     # left
-    considered_pos = @pos
-    considered_pos[1] -= 1
-    found_enemy = false
-    until blocked?(considered_pos) || found_enemy
-      found_enemy = enemy?(pos)
-      HORIZONTAL_DIRS << considered_pos
-      considered_pos[1] -= 1
-    end
+    grow_unblocked_moves_in_dir(0, -1)
 
     # right
-    considered_pos = @pos
-    considered_pos[1] += 1
-    found_enemy = false
-    until blocked?(considered_pos) || found_enemy
-      found_enemy = enemy?(pos)
-      HORIZONTAL_DIRS << considered_pos
-      considered_pos[1] += 1
-    end
+    grow_unblocked_moves_in_dir(0, 1)
 
     HORIZONTAL_DIRS
   end
 
   def diagonal_dirs
     DIAGONAL_DIRS = []
+
     # up right
-    considered_pos = @pos
-    considered_pos[0] -= 1
-    considered_pos[1] += 1
-    found_enemy = false
-    until blocked?(considered_pos) || found_enemy
-      found_enemy = enemy?(pos)
-      DIAGONAL_DIRS << considered_pos
-      considered_pos[0] -= 1
-      considered_pos[1] += 1
-    end
+    grow_unblocked_moves_in_dir(-1, 1)
 
     # up left
-    considered_pos = @pos
-    considered_pos[0] -= 1
-    considered_pos[1] -= 1
-    found_enemy = false
-    until blocked?(considered_pos) || found_enemy
-      found_enemy = enemy?(pos)
-      DIAGONAL_DIRS << considered_pos
-      considered_pos[0] -= 1
-      considered_pos[1] -= 1
-    end
+    grow_unblocked_moves_in_dir(-1, -1)
 
     # down left
-    considered_pos = @pos
-    considered_pos[0] += 1
-    considered_pos[1] -= 1
-    found_enemy = false
-    until blocked?(considered_pos) || found_enemy
-      found_enemy = enemy?(pos)
-      DIAGONAL_DIRS << considered_pos
-      considered_pos[0] += 1
-      considered_pos[1] -= 1
-    end
+    grow_unblocked_moves_in_dir(1, -1)
 
     # down right
-    considered_pos = @pos
-    considered_pos[0] += 1
-    considered_pos[1] += 1
-    found_enemy = false
-    until blocked?(considered_pos) || found_enemy
-      found_enemy = enemy?(pos)
-      DIAGONAL_DIRS << considered_pos
-      considered_pos[0] += 1
-      considered_pos[1] += 1
-    end
+    grow_unblocked_moves_in_dir(1, 1)
 
     DIAGONAL_DIRS
   end
@@ -124,7 +61,17 @@ module Slideable
   end
 
   def grow_unblocked_moves_in_dir(dx, dy)
-
+    direction_array = (dx != 0 && dy != 0 ? DIAGONAL_DIRS : HORIZONTAL_DIRS)
+    considered_pos = [*pos] # make a copy of pos
+    considered_pos[0] += dx
+    considered_pos[1] += dy
+    found_enemy = false
+    until blocked?(considered_pos) || found_enemy
+      found_enemy = enemy?(pos)
+      direction_array << considered_pos
+      considered_pos[0] += dx
+      considered_pos[1] += dy
+    end
   end
 end
 
