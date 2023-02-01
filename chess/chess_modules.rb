@@ -1,3 +1,5 @@
+require "byebug"
+
 module Slideable
   HORIZONTAL_DIRS = [
     [1, 0],   # up
@@ -21,23 +23,39 @@ module Slideable
   end
 
   def moves
+    # debugger
     # returns all moves in an array
     all_moves = []
     dirs = move_dirs
-
     if dirs.include?(:horizontal)
-      horizontal_dirs.each do |direction|
-        all_moves += grow_unblocked_moves_in_dir(*direction)
+      horizontal_dirs.each do |dx, dy|
+        all_moves += grow_unblocked_moves_in_dir(dx, dy)
       end
     end
 
     if dirs.include?(:diagonal)
-      diagonal_dirs.each do |direction|
-        all_moves += grow_unblocked_moves_in_dir(*direction)
+      diagonal_dirs.each do |dx, dy|
+        all_moves += grow_unblocked_moves_in_dir(dx, dy)
       end
     end
 
     all_moves
+  end
+
+  def grow_unblocked_moves_in_dir(dx, dy)
+    # debugger
+    moves = []
+    considered_pos = pos.dup # make a copy of current position
+    considered_pos[0] += dx
+    considered_pos[1] += dy
+    found_enemy = false
+    until blocked?(considered_pos) || found_enemy
+      found_enemy = enemy?(pos)
+      moves << considered_pos.dup
+      considered_pos[0] += dx
+      considered_pos[1] += dy
+    end
+    moves
   end
 
   private
@@ -46,23 +64,8 @@ module Slideable
     # implemented in subclasses
   end
 
-  def grow_unblocked_moves_in_dir(dx, dy)
-    moves = []
-    considered_pos = pos.dup # make a copy of current position
-    considered_pos[0] += dx
-    considered_pos[1] += dy
-    found_enemy = false
-    until blocked?(considered_pos) || found_enemy
-      found_enemy = enemy?(pos)
-      moves << considered_pos
-      considered_pos[0] += dx
-      considered_pos[1] += dy
-    end
-    moves
-  end
-
   def blocked?(pos)
-    return true if (board[pos].color == color) || pos[0] < 0 || pos[0] > 7 || pos[1] < 0 || pos[1] > 7
+    return true if pos[0] < 0 || pos[0] > 7 || pos[1] < 0 || pos[1] > 7 || (board[pos].color == color) 
     false
   end
 
@@ -79,7 +82,7 @@ module Stepable
       considered_pos = pos.dup # make a copy of current position
       considered_pos[0] += dx
       considered_pos[1] += dy
-      all_moves << consider_position if !blocked?(considered_pos)
+      all_moves << considered_pos.dup if !blocked?(considered_pos)
     end
     all_moves
   end
@@ -91,7 +94,7 @@ module Stepable
   end
 
   def blocked?(pos)
-    return true if (board[pos].color == color) || pos[0] < 0 || pos[0] > 7 || pos[1] < 0 || pos[1] > 7
+    return true if pos[0] < 0 || pos[0] > 7 || pos[1] < 0 || pos[1] > 7 || (board[pos].color == color)
     false
   end
 end

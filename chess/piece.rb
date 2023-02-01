@@ -2,12 +2,15 @@ require_relative 'chess_modules'
 require "singleton"
 
 class Piece
+  attr_reader :color, :board
+  attr_accessor :pos
+
   def initialize(color, board, pos)
     
     @color = color
     @board = board 
     @pos = pos 
-    
+
   end
 
   def to_s
@@ -31,9 +34,6 @@ class Piece
   end
 
   private
-  attr_reader :color, :board
-  attr_accessor :pos
-
   def move_into_check?(end_pos)
 
   end
@@ -177,9 +177,11 @@ end
 
 class NullPiece < Piece
   include Singleton
+  attr_reader :color, :symbol
+  
   def initialize
     @color = :pink
-    @symbol = ⭐️ #🧱
+    @symbol = :nil  #'⭐️' #🧱
   end
 
   def moves
@@ -191,7 +193,6 @@ class NullPiece < Piece
   end
 
   private
-  attr_reader :color, :symbol
 end
 
 # puts '🧱'
