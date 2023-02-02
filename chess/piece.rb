@@ -1,5 +1,6 @@
 require_relative 'chess_modules'
 require "singleton"
+require "colorize"
 
 class Piece
   attr_reader :color, :board
@@ -14,23 +15,34 @@ class Piece
   end
 
   def to_s
-
+    symbol.to_s.colorize(color)
   end
 
   def empty?
-
+    self.is_a? NullPiece
   end
   
   def valid_moves
-
+    moves
   end
 
   def pos=(val)
-
+    @pos = val
   end
 
   def symbol
+    # filled in subclasses
+  end
 
+  def blocked?(pos)
+    return true if pos[0] < 0 || pos[0] > 7 || pos[1] < 0 || pos[1] > 7 || (board[pos].color == color) 
+    false
+  end
+
+  def enemy?(pos)
+    enemy_color = (color == :white ? :black : :white)
+    return true if board[pos].color == enemy_color
+    false
   end
 
   private
@@ -48,7 +60,7 @@ class Rook < Piece
   end
 
   def symbol
-
+    :♖
   end
 
   private
@@ -64,7 +76,7 @@ class Bishop < Piece
   end
 
   def symbol
-    
+    :♗
   end
 
   private
@@ -80,7 +92,7 @@ class Queen < Piece
   end
 
   def symbol
-    
+    :♕
   end
 
   private
@@ -97,7 +109,7 @@ class King < Piece
   end
 
   def symbol
-    
+    :♔
   end
 
   protected
@@ -124,7 +136,7 @@ class Knight < Piece
   end
 
   def symbol
-    
+    :♘
   end
 
   protected
@@ -149,22 +161,22 @@ class Pawn < Piece
   end
 
   def symbol
-    
+    :♙
   end
 
   def moves
-
+    forward_steps + side_attacks
   end
 
   private
   def at_start_row?
-    return true if pos[0] == 1 || pos[0] == 6 
+    start = (color == :white ? 1 : 6)
+    return true if pos[0] == start
     false 
   end
 
   def forward_dir
-    color == :white ? -1 : 1
-
+    color == :white ? 1 : -1
   end
 
   def forward_steps
@@ -174,41 +186,40 @@ class Pawn < Piece
     considered_pos = pos.dup
     considered_pos[0] += dx
 
-    if !blocked(considered_pos) 
+    if !blocked?(considered_pos) 
       considered_moves << considered_pos.dup
       
       considered_pos[0] += dx
-      if !blocked(considered_pos) && at_start_row?
+      if !blocked?(considered_pos) && at_start_row?
         considered_moves << considered_pos.dup 
       end
     end
    
-    return considered_moves 
+    considered_moves 
   end
 
   def side_attacks
+    considered_moves = []
+    dx = forward_dir
 
-  end
+    [-1, 1].each do |dy|
+      considered_pos = pos.dup
+      considered_pos[0] += dx
+      considered_pos[1] += dy
+      considered_moves << considered_pos.dup if !blocked?(considered_pos) && enemy?(considered_pos)
+    end
 
-  def blocked?(pos)
-    return true if pos[0] < 0 || pos[0] > 7 || pos[1] < 0 || pos[1] > 7 || (board[pos].color == color) 
-    false
-  end
-
-  def enemy?(pos)
-    return true if board[pos].color != color
-    false
+    considered_moves
   end
 end
 
 
 class NullPiece < Piece
   include Singleton
-  attr_reader :color, :symbol
-  
+  attr_reader :color
+
   def initialize
-    @color = :pink
-    @symbol = :nil  #'⭐️' #🧱
+    @color = :gray
   end
 
   def moves
@@ -216,10 +227,8 @@ class NullPiece < Piece
   end
 
   def symbol
-    
+    ' '#:🙾 # :⭐️
   end
 
   private
 end
-
-# puts '🧱'

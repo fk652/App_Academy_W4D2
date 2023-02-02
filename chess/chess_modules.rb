@@ -1,5 +1,3 @@
-require "byebug"
-
 module Slideable
   HORIZONTAL_DIRS = [
     [1, 0],   # up
@@ -23,10 +21,10 @@ module Slideable
   end
 
   def moves
-    # debugger
     # returns all moves in an array
     all_moves = []
     dirs = move_dirs
+
     if dirs.include?(:horizontal)
       horizontal_dirs.each do |dx, dy|
         all_moves += grow_unblocked_moves_in_dir(dx, dy)
@@ -43,7 +41,6 @@ module Slideable
   end
 
   def grow_unblocked_moves_in_dir(dx, dy)
-    # debugger
     moves = []
     considered_pos = pos.dup # make a copy of current position
     considered_pos[0] += dx
@@ -63,16 +60,6 @@ module Slideable
     # gets all moves directions
     # implemented in subclasses
   end
-
-  def blocked?(pos)
-    return true if pos[0] < 0 || pos[0] > 7 || pos[1] < 0 || pos[1] > 7 || (board[pos].color == color) 
-    false
-  end
-
-  def enemy?(pos)
-    return true if board[pos].color != color
-    false
-  end
 end
 
 module Stepable
@@ -91,10 +78,5 @@ module Stepable
   def move_diffs
     # implemented in subclass
     # gets all possible move directions
-  end
-
-  def blocked?(pos)
-    return true if pos[0] < 0 || pos[0] > 7 || pos[1] < 0 || pos[1] > 7 || (board[pos].color == color)
-    false
   end
 end
